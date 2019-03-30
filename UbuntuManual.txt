@@ -1,0 +1,100 @@
+一、apt 换源
+    在Software&Updates -> Ubuntu Software -> Download from 选择清华镜像
+
+二、安装nvidia显卡驱动
+方法一：
+    在Software&Updates -> Additional Drivers中点击选择nvidia驱动
+
+方法二：
+    sudo add-apt-repository ppa:graphics-drivers/ppa
+    sudo apt update
+    ubuntu-drivers devices
+    sudo apt install nvidia-driver-410    (nvidia-384)
+    sudo apt install mesa-common-dev freeglut3-dev
+ 
+三、常用软件
+0.sudo apt install build-essential
+sudo apt install amule kazam filezilla qbittorrent vim rar adb git unrar zip unzip p7zip-full vlc protobuf-compiler python3-pil python3-lxml python3-tk openssh-server chromium-browser openssh-server
+sudo apt install flashplugin-installer  (这个耗时比较长)
+sudo pip3 install Cython contextlib2 jupyter matplotlib
+
+sudo pip3 install --upgrade jupyterthemes
+jt -t oceans16 -f fira -fs 12 -cellw 100% -ofs 10 -dfs 10
+
+1.export PATH=/usr/local/cuda/bin:$PATH   
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+
+2.android studio build.gradle使用中国镜像
+注释 jcenter(), 使用
+google()
+mavenCentral()
+maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+maven {url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'}
+
+3.anaconda换清华源
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --set show_channel_urls yes
+
+四、安装OpenCV
+0.首先安装需要的依赖项。
+  sudo apt install build-essential
+  sudo apt-get install libcanberra-gtk-module libatlas-base-dev gfortran checkinstall yasm
+  sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libv4l-dev libxvidcore-dev libx264-dev libgtk-3-dev libjasper-dev libxine2-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev qt5-default libatlas-base-dev libfaac-dev libmp3lame-dev libtheora-dev
+
+  sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security main"  
+  (sudo add-apt-repository "deb http://security.ubuntu.com/ubuntubionic--security main)
+  sudo apt update
+  sudo apt install libjasper1 libjasper-dev 
+
+  sudo apt-get install python-dev python3-dev python-numpy python3-numpy python3-testresources libtbb2 libtbb-dev libjpeg-dev libjpeg8-dev libpng-dev libtiff-dev libdc1394-22-dev libvorbis-dev libxvidcore-dev libopencore-amrnb-dev libopencore-amrwb-dev libavresample-dev x264 v4l-utils libprotobuf-dev protobuf-compiler libgoogle-glog-dev libgflags-dev libgphoto2-dev libeigen3-dev libhdf5-dev doxygen
+
+1.在https://raw.githubusercontent.com/opencv/opencv_3rdparty/ippicv/master_20180723/ippicv/ippicv_2019_lnx_intel64_general_20180723.tgz
+  (https://github.com/opencv/opencv_3rdparty/tree/ippicv/master_20180723)下载ippicv_2019_lnx_intel64_general_20180723.tgz（可能版本不同）
+  保存路经随意，我的路径/home/jack/Programs/opencv-3.4.5
+
+2.修改opencv里相关配置文件
+  打开终端，输入：gedit /home/jack/Programs/opencv-3.4.5/3rdparty/ippicv/ippicv.cmake 
+  将47行的："https://raw.githubusercontent.com/opencv/opencv_3rdparty/${IPPICV_COMMIT}/ippicv/"
+  改为步骤1中手动下载的文件的本地路径："file:///home/jack/Programs/opencv-3.4.5/" 
+  编辑完成保存退出。
+（如果已有.cache文件夹，则1、2两步不需要做，直接将.cache文件夹放入OpenCV文件夹即可）
+
+3.cmake -D WITH_TBB=ON -D BUILD_EXAMPLES=OFF -D BUILD_DOCS=OFF -D BUILD_PERF_TESTS=OFF -D BUILD_TESTS=OFF -D INSTALL_C_EXAMPLES=OFF -D INSTALL_PYTHON_EXAMPLES=OFF -D OPENCV_ENABLE_NONFREE=ON -D ENABLE_PRECOMPILED_HEADERS=OFF -D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib/modules -D WITH_OPENMP=ON -D CMAKE_BUILD_TYPE=RELEASE -D WITH_CUDA=ON -D WITH_CSTRIPES=ON -D WITH_IPP=ON -D WITH_OPENCL=ON -D WITH_OPENCLAMDBLAS=ON -D WITH_OPENCLAMDFFT=ON -D OPENCL_FOUND=ON -D CPU_BASELINE=SSE4.1 -D CPU_BASELINE=SSE4.2 -D CPU_BASELINE=AVX -D CPU_BASELINE=AVX2 -D CPU_BASELINE=FMA -D WITH_V4L=ON -D WITH_EIGEN=ON -D WITH_OPENGL=ON -D WITH_QT=ON -D CMAKE_INSTALL_PREFIX=/usr/local/ ..
+
+4.参考ubuntu16.04安装opencv3.4.1教程（https://blog.csdn.net/cocoaqin/article/details/78163171），添加相关路径，否则可能会出现编译成功，但运行的时候提示libopencv_cudaarithm.so.4.0找不到的问题。
+
+5.set(OpenCV_DIR /media/jack/data/ubuntu/OpenCV/new_usr/local/lib/cmake/opencv4)
+#set(OpenCV_DIR /media/jack/data/ubuntu/OpenCV/345usr/local/share/OpenCV)
+#set(OpenCV_DIR C:/opencv345/build)
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+
+五、TensorFlow源码编译
+0.sudo apt install python-dev python-pip python3-dev python3-pip pkg-config zip zlib1g-dev unzip
+
+1.sudo pip3 install six numpy wheel mock keras_applications keras_preprocessing protobuf absl-py astor gast google_pasta tensorboard tensorflow_estimator termcolor
+
+3.gcc5.5 Fix AVX512 error:
+for f in avx512fintrin.h avx512pfintrin.h avx512vlintrin.h; do curl -H "User-Agent:Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36" -o $f "https://gcc.gnu.org/viewcvs/gcc/branches/gcc-5-branch/gcc/config/i386/${f}?view=co&revision=245536&content-type=text%2Fplain&pathrev=245536" done && mv avx512*intrin.h  /usr/lib/gcc/x86_64-linux-gnu/5/include/
+
+4. ./configer
+
+5.build_pip_package
+bazel build -c opt --copt=-msse4.1 --copt=-msse4.2 --copt=-mavx --copt=-mavx2 --copt=-mfma --config=cuda //tensorflow/tools/pip_package:build_pip_package
+
+6.bazel-bin/tensorflow/tools/pip_package/build_pip_package ~/tensorflow_pkg
+
+7.(optional)build so for cc
+
+六、MXNET源码编译
+0.sudo apt-get install -y build-essential git libopenblas-dev
+
+1.git clone --recursive https://github.com/apache/incubator-mxnet mxnet
+
+cd mxnet
+git checkout v1.3.x
+git submodule update --init
+
+2.修改 make/config.mk文件
